@@ -13,7 +13,7 @@
     "test-negative": "newman run \"./postman/collections/Bookings API Negative.json\" -e \"./postman/environments/Local.postman_environment.json\"",
     "test": "npm run test-positive && npm run test-negative"
   },
-  "author": "",
+  "author": "Tiga85",
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^5.19.1",
