@@ -18,9 +18,9 @@ model User {
   username       String    @unique
   password       String
   name           String
-  email          String
+  email          String    @unique
   phoneNumber    String
-  profileImage   String
+  profilePicture String // Update this to match the JSON key
   bookings       Booking[]
   reviews        Review[]
   createdAt      DateTime  @default(now())
@@ -28,17 +28,17 @@ model User {
 }
 
 model Host {
-  id            String    @id @default(uuid())
-  username      String    @unique
-  password      String
-  name          String
-  email         String
-  phoneNumber   String
-  profileImage  String
-  bio           String
-  listings      Property[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id             String     @id @default(uuid())
+  username       String     @unique
+  password       String
+  name           String
+  email          String
+  phoneNumber    String
+  profilePicture String
+  aboutMe        String
+  listings       Property[]
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
 }
 
 model Property {
@@ -47,8 +47,8 @@ model Property {
   title         String
   description   String
   location      String
-  pricePerNight Decimal   // No need for @postgresql.Decimal
-  bedCount      Int
+  pricePerNight Decimal // No need for @postgresql.Decimal
+  bedroomCount  Int
   bathRoomCount Int
   maxGuestCount Int
   rating        Int
@@ -67,28 +67,28 @@ model Amenity {
 }
 
 model Booking {
-  id            String    @id @default(uuid())
-  userId        String
-  propertyId    String
-  checkInDate   DateTime
-  checkOutDate  DateTime
-  totalGuests   Int
-  totalPrice    Int
-  bookingStatus String
-  user          User      @relation(fields: [userId], references: [id])
-  property      Property  @relation(fields: [propertyId], references: [id])
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id             String   @id @default(uuid())
+  userId         String?
+  propertyId     String
+  checkinDate    DateTime
+  checkoutDate   DateTime
+  numberOfGuests Int
+  totalPrice     Int
+  bookingStatus  String
+  user           User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  property       Property @relation(fields: [propertyId], references: [id])
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }
 
 model Review {
-  id          String    @id @default(uuid())
-  userId      String
-  propertyId  String
-  rating      Int
-  comment     String
-  user        User      @relation(fields: [userId], references: [id])
-  property    Property  @relation(fields: [propertyId], references: [id])
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id         String   @id @default(uuid())
+  userId     String?
+  propertyId String
+  rating     Int
+  comment    String
+  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  property   Property @relation(fields: [propertyId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }
