@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 
-const secretKey = "Tiga85";
+const secretKey = process.env.AUTH_SECRET_KEY || 'Tiga85';
+
 //token generator
 const token = jwt.sign(
   { userId: "user123" }, // Payload (example userId)
@@ -10,7 +11,6 @@ const token = jwt.sign(
 
 console.log(token); // Output the token for use
 
-//const secretKey = process.env.AUTH_SECRET_KEY || 'Tiga85';  // Ensure it's properly loaded
 
 export function authenticateToken(req, res, next) {
   const authHeader = req.headers["authorization"];
