@@ -1,0 +1,20 @@
+{
+    "propertyAmenities": [
+      {
+        "propertyId": "g9012345-67ef-0123-4567-89abcdef0123",
+        "amenityId": "l4567890-12gh-ijkl-1234-56789abcdef0"  
+      },
+      {
+        "propertyId": "g9012345-67ef-0123-4567-89abcdef0123",
+        "amenityId": "o7890123-45lm-nopq-4567-89abcdef0123"  
+      {,
+        "propertyId": "h0123456-78f0-1234-5678-9abcdef01234",
+        "amenityId": "m5678901-23ij-klmn-2345-6789abcdef01"  
+      },
+      {
+        "propertyId": "h0123456-78f0-1234-5678-9abcdef01234",
+        "amenityId": "q9012345-67no-pqrs-6789-abcdef012345"  
+      }
+    ]
+  }
+  
