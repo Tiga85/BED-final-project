@@ -6,14 +6,15 @@ import {
   updateBooking,
   deleteBooking,
 } from "../services/bookingService.js";
-import { authenticateToken } from "../middleware/authMiddleware.js";
 
+import {authMiddleware} from '../middleware/advancedAuth.js';
+//import {authMiddleware} from '../middleware/authMiddleware.js';
 const router = express.Router();
 
-router.get("/bookings",  getAllBookings);
-router.post("/bookings", authenticateToken, createBooking);
-router.get("/bookings/:id",   getBookingById);
-router.put("/bookings/:id", authenticateToken, updateBooking);
-router.delete("/bookings/:id", authenticateToken, deleteBooking);
+router.get("/bookings", getAllBookings);
+router.post("/bookings", authMiddleware, createBooking);
+router.get("/bookings/:id", getBookingById);
+router.put("/bookings/:id", authMiddleware, updateBooking);
+router.delete("/bookings/:id", authMiddleware, deleteBooking);
 
 export default router;

@@ -6,14 +6,15 @@ import {
   updateAmenity,
   deleteAmenity,
 } from "../services/amenityService.js";
-import { authenticateToken } from "../middleware/authMiddleware.js";
+import {authMiddleware} from '../middleware/advancedAuth.js';
+//import {authMiddleware} from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
 router.get("/amenities", getAllAmenities);
-router.post("/amenities", authenticateToken, createAmenity);
+router.post("/amenities", authMiddleware, createAmenity);
 router.get("/amenities/:id", getAmenityById);
-router.put("/amenities/:id", authenticateToken, updateAmenity);
-router.delete("/amenities/:id", authenticateToken, deleteAmenity);
+router.put("/amenities/:id", authMiddleware, updateAmenity);
+router.delete("/amenities/:id", authMiddleware, deleteAmenity);
 
 export default router;

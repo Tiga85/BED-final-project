@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const secretKey = process.env.AUTH_SECRET_KEY ;
+const secretKey = process.env.AUTH_SECRET_KEY || "my-secret-key";
 
 //token generator
 const token = jwt.sign(
@@ -11,8 +11,7 @@ const token = jwt.sign(
 
 //console.log(token); // Output the token for use
 
-
-export function authenticateToken(req, res, next) {
+export function authMiddleware(req, res, next) {
   const authHeader = req.headers["authorization"];
   const token = authHeader && authHeader.split(" ")[1]; // Split 'Bearer <token>'
 
