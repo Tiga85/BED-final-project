@@ -10,9 +10,9 @@ import { authenticateToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/properties", getAllProperties);
+router.get("/properties",  getAllProperties);
 router.post("/properties", authenticateToken, createProperty);
-router.get("/properties/:id", getPropertyById);
+router.get("/properties/:id",  getPropertyById);
 router.put("/properties/:id", authenticateToken, updateProperty);
 router.delete("/properties/:id", authenticateToken, deleteProperty);
 
