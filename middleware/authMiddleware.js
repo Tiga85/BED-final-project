@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 
-const secretKey = process.env.AUTH_SECRET_KEY || 'Tiga85';
+const secretKey = process.env.AUTH_SECRET_KEY ;
 
 //token generator
 const token = jwt.sign(
