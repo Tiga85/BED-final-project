@@ -3,7 +3,9 @@
 //import  Sentry from "@sentry/node";
 
 import express from "express";
+import 'dotenv/config';
 import { logMiddleware } from "./middleware/logMiddleware.js";
+import loginRouter from "./routes/loginRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import hostRoutes from "./routes/hostRoutes.js";
 import propertyRoutes from "./routes/propertyRoutes.js";
@@ -19,6 +21,7 @@ app.use(logMiddleware);
 
 //app.use("/docs", express.static('docs'));
 
+app.use("/api", loginRouter);
 app.use("/api", userRoutes);
 app.use("/api", hostRoutes);
 app.use("/api", propertyRoutes);
