@@ -3,7 +3,7 @@
 //import  Sentry from "@sentry/node";
 
 import express from "express";
-
+import { logMiddleware } from "./middleware/logMiddleware.js";
 import userRoutes from "./routes/userRoutes.js";
 import hostRoutes from "./routes/hostRoutes.js";
 import propertyRoutes from "./routes/propertyRoutes.js";
@@ -13,8 +13,9 @@ import reviewRoutes from "./routes/reviewRoutes.js";
 import dataRoutes from "./routes/dataRoutes.js";
 
 const app = express();
-
 app.use(express.json());
+
+app.use(logMiddleware);
 
 //app.use("/docs", express.static('docs'));
 
