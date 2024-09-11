@@ -20,9 +20,9 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/users", getAllUsers);
+router.get("/users",  getAllUsers);
 router.post("/users", authenticateToken, createUser);
-router.get("/users/:id", getUserById);
+router.get("/users/:id",  getUserById);
 router.put("/users/:id", authenticateToken, updateUser);
 router.delete("/users/:id", authenticateToken, deleteUser);
 

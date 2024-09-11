@@ -10,10 +10,10 @@ import { authenticateToken } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/reviews",  getAllReviews);
+router.get("/reviews",   getAllReviews);
 router.post("/reviews", authenticateToken, createReview);
-router.get("/reviews/:id",  getReviewById);
-router.put("/reviews/:id", authenticateToken, updateReview);
+router.get("/reviews/:id", authenticateToken,  getReviewById);
+router.put("/reviews/:id",  updateReview);
 router.delete("/reviews/:id", authenticateToken, deleteReview);
 
 export default router;
