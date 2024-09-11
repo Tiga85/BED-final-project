@@ -9,7 +9,7 @@ const token = jwt.sign(
   { expiresIn: "1h" } // Token expires in 1 hour
 );
 
-console.log(token); // Output the token for use
+//console.log(token); // Output the token for use
 
 
 export function authenticateToken(req, res, next) {
