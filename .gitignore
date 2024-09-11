@@ -1,7 +1,12 @@
 node_modules
 .vscode
 README.md
-
+.env
+access.log
+error.log
 
 # Sentry Config File
 .env.sentry-build-plugin
+sentry.client.config.js
+sentry.edge.config.js
+sentry.server.config.js
