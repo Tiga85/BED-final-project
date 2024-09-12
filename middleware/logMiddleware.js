@@ -1,6 +1,6 @@
 import { logger } from "../utils/log.js";
 
-export function logMiddleware(req, res, next) {
+ function logMiddleware(req, res, next) {
   const start = new Date();
 
   next(); // Pass the request to the next middleware
@@ -15,3 +15,4 @@ export function logMiddleware(req, res, next) {
     Duration: ${ms} ms`
   );
 }
+export default logMiddleware;
