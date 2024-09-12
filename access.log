@@ -75,3 +75,7 @@
 {"level":"info","message":"GET \n    /favicon.ico. \n    Status: 200. \n    Duration: 11 ms","service":"bookings-api"}
 {"level":"info","message":"GET \n    /. \n    Status: 200. \n    Duration: 1 ms","service":"bookings-api"}
 {"level":"info","message":"GET \n    /favicon.ico. \n    Status: 200. \n    Duration: 0 ms","service":"bookings-api"}
+{"level":"info","message":"GET \n    /. \n    Status: 304. \n    Duration: 10 ms","service":"bookings-api"}
+{"level":"info","message":"GET \n    /favicon.ico. \n    Status: 200. \n    Duration: 0 ms","service":"bookings-api"}
+{"level":"info","message":"GET \n    /. \n    Status: 200. \n    Duration: 9 ms","service":"bookings-api"}
+{"level":"info","message":"GET \n    /. \n    Status: 304. \n    Duration: 18 ms","service":"bookings-api"}
