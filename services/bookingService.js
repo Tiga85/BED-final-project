@@ -1,52 +1,52 @@
 import { PrismaClient } from "@prisma/client";
+import NotFoundError from "../errors/NotFoundError.js";
+
 const prisma = new PrismaClient();
 
-// Get all bookings
-export async function getAllBookings(req, res) {
+export async function getAllBookings(req, res, next) {
   try {
     const bookings = await prisma.booking.findMany({
       include: {
-        user: true,   // Include user related to the booking
+        user: true, // Include user related to the booking
         property: true, // Include property related to the booking
       },
     });
     res.status(200).json(bookings);
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    next(error);
   }
 }
 
-// Create a new booking
-export async function createBooking(req, res) {
+export async function createBooking(req, res, next) {
   try {
     const booking = await prisma.booking.create({
       data: req.body,
     });
     res.status(201).json(booking);
   } catch (error) {
-    res.status(400).json({ error: "Bad request" });
+    next(error);
   }
 }
 
-// Get booking by ID
-export async function getBookingById(req, res) {
+export async function getBookingById(req, res, next) {
   try {
     const booking = await prisma.booking.findUnique({
       where: { id: req.params.id },
       include: {
-        user: true,   // Include user related to the booking
+        user: true, // Include user related to the booking
         property: true, // Include property related to the booking
       },
     });
-    if (!booking) return res.status(404).json({ error: "Booking not found" });
+    if (!booking) {
+      throw new NotFoundError("booking", req.params.id);
+    }
     res.status(200).json(booking);
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    next(error);
   }
 }
 
-// Update booking by ID
-export async function updateBooking(req, res) {
+export async function updateBooking(req, res, next) {
   try {
     const booking = await prisma.booking.update({
       where: { id: req.params.id },
@@ -54,18 +54,20 @@ export async function updateBooking(req, res) {
     });
     res.status(200).json(booking);
   } catch (error) {
-    res.status(400).json({ error: "Bad request" });
+    next(error);
   }
 }
 
-// Delete booking by ID
-export async function deleteBooking(req, res) {
+export async function deleteBooking(req, res, next) {
   try {
-    await prisma.booking.delete({
+    const deletedBooking = await prisma.booking.delete({
       where: { id: req.params.id },
     });
+    if (!deletedBooking) {
+      throw new NotFoundError("booking", req.params.id);
+    }
     res.status(200).json({ message: "Booking deleted" });
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    next(error);
   }
 }

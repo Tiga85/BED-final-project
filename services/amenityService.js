@@ -1,16 +1,17 @@
 import { PrismaClient } from "@prisma/client";
+import NotFoundError from "../errors/NotFoundError.js";
+
 const prisma = new PrismaClient();
 
-export async function getAllAmenities(req, res) {
+export async function getAllAmenities(req, res, next) {
   try {
     const { name } = req.query;
 
     const filter = {};
     if (name) {
-      filter.name = { contains: name, mode: "insensitive" }; // Case-insensitive search
+      filter.name = { contains: name, mode: "insensitive" };
     }
 
-    // Find amenities with matching properties
     const amenities = await prisma.amenity.findMany({
       where: filter,
       include: {
@@ -24,37 +25,39 @@ export async function getAllAmenities(req, res) {
 
     res.status(200).json(amenities);
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    next(error);
   }
 }
 
-export async function createAmenity(req, res) {
+export async function createAmenity(req, res, next) {
   try {
     const amenity = await prisma.amenity.create({
       data: req.body,
     });
     res.status(201).json(amenity);
   } catch (error) {
-    res.status(400).json({ error: "Bad request" });
+    next(error);
   }
 }
 
-export async function getAmenityById(req, res) {
+export async function getAmenityById(req, res, next) {
   try {
     const amenity = await prisma.amenity.findUnique({
       where: { id: req.params.id },
       include: {
-        properties: true,
+        properties: true, // Include the properties associated with the amenity
       },
     });
-    if (!amenity) return res.status(404).json({ error: "Amenity not found" });
+    if (!amenity) {
+      throw new NotFoundError("amenity", req.params.id);
+    }
     res.status(200).json(amenity);
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    next(error);
   }
 }
 
-export async function updateAmenity(req, res) {
+export async function updateAmenity(req, res, next) {
   try {
     const amenity = await prisma.amenity.update({
       where: { id: req.params.id },
@@ -62,15 +65,20 @@ export async function updateAmenity(req, res) {
     });
     res.status(200).json(amenity);
   } catch (error) {
-    res.status(400).json({ error: "Bad request" });
+    next(error);
   }
 }
 
-export async function deleteAmenity(req, res) {
+export async function deleteAmenity(req, res, next) {
   try {
-    await prisma.amenity.delete({ where: { id: req.params.id } });
+    const deletedAmenity = await prisma.amenity.delete({
+      where: { id: req.params.id },
+    });
+    if (!deletedAmenity) {
+      throw new NotFoundError("amenity", req.params.id);
+    }
     res.status(200).json({ message: "Amenity deleted" });
   } catch (error) {
-    res.status(500).json({ error: "Internal server error" });
+    next(error);
   }
 }
