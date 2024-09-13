@@ -5,119 +5,95 @@ import propertiesData from "../data/properties.json" assert { type: "json" };
 import hostsData from "../data/hosts.json" assert { type: "json" };
 import bookingsData from "../data/bookings.json" assert { type: "json" };
 import amenitiesData from "../data/amenities.json" assert { type: "json" };
-import { v4 as uuid } from "uuid";
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // Seed Users
-  for (const user of usersData.users) {
-    const existingUser = await prisma.user.findUnique({
-      where: { id: user.id },
+  try {
+    console.log("Starting database seeding...");
+
+    console.log("Seeding Users...");
+    await prisma.user.createMany({
+      data: usersData.users,
+      skipDuplicates: true, // Avoid creating duplicates
     });
 
-    if (!existingUser) {
-      await prisma.user.create({
-        data: user,
-      });
-    }
-  }
-  // Seed Hosts
-  for (const host of hostsData.hosts) {
-    const existingHost = await prisma.host.findUnique({
-      where: { id: host.id },
+    console.log("Seeding Hosts...");
+    await prisma.host.createMany({
+      data: hostsData.hosts,
+      skipDuplicates: true,
     });
 
-    if (!existingHost) {
-      await prisma.host.create({
-        data: host,
-      });
-    }
-  }
-  // Seed Properties
-  for (const property of propertiesData.properties) {
-    const existingProperty = await prisma.property.findUnique({
-      where: { id: property.id },
+    console.log("Seeding Properties...");
+    await prisma.property.createMany({
+      data: propertiesData.properties,
+      skipDuplicates: true,
     });
 
-    if (!existingProperty) {
-      await prisma.property.create({
-        data: property,
-      });
-    }
-  }
-
-  // Seed Amenities
-  for (const amenity of amenitiesData.amenities) {
-    const existingAmenity = await prisma.amenity.findUnique({
-      where: { id: amenity.id },
+    console.log("Seeding Amenities...");
+    await prisma.amenity.createMany({
+      data: amenitiesData.amenities,
+      skipDuplicates: true,
     });
 
-    if (!existingAmenity) {
-      await prisma.amenity.create({
-        data: amenity,
-      });
-    }
-  }
-  // Seed Bookings
-  for (const booking of bookingsData.bookings) {
-    const existingBooking = await prisma.booking.findUnique({
-      where: { id: booking.id },
-    });
-
-    if (existingBooking) {
-      // Optionally update existing record
-      await prisma.booking.update({
+    console.log("Seeding Bookings...");
+    for (const booking of bookingsData.bookings) {
+      const existingBooking = await prisma.booking.findUnique({
         where: { id: booking.id },
-        data: booking,
       });
-    } else {
-      // Create new record
-      await prisma.booking.create({
-        data: booking,
-      });
-    }
-  }
 
-  // Seed Reviews
-  for (const review of reviewsData.reviews) {
-    const existingProperty = await prisma.property.findUnique({
-      where: { id: review.propertyId },
-    });
-
-    if (!existingProperty) {
-      console.error(
-        `Property with id ${review.propertyId} does not exist. Skipping review creation.`
-      );
-      continue; // Skip this review if the property does not exist
+      if (existingBooking) {
+        console.log(`Updating Booking with ID ${booking.id}`);
+        await prisma.booking.update({
+          where: { id: booking.id },
+          data: booking,
+        });
+      } else {
+        console.log(`Creating new Booking with ID ${booking.id}`);
+        await prisma.booking.create({
+          data: booking,
+        });
+      }
     }
 
-    const existingReview = await prisma.review.findUnique({
-      where: { id: review.id },
-    });
+    console.log("Seeding Reviews...");
+    for (const review of reviewsData.reviews) {
+      const existingProperty = await prisma.property.findUnique({
+        where: { id: review.propertyId },
+      });
 
-    if (existingReview) {
-      // Optionally update the existing review
-      await prisma.review.update({
+      if (!existingProperty) {
+        console.error(
+          `Property with id ${review.propertyId} does not exist. Skipping review creation.`
+        );
+        continue; // Skip this review if the property does not exist
+      }
+
+      const existingReview = await prisma.review.findUnique({
         where: { id: review.id },
-        data: review,
       });
-    } else {
-      // Create new review
-      await prisma.review.create({
-        data: review,
-      });
-    }
-  }
 
-  console.log("Database seeded successfully!");
+      if (existingReview) {
+        console.log(`Updating Review with ID ${review.id}`);
+        await prisma.review.update({
+          where: { id: review.id },
+          data: review,
+        });
+      } else {
+        console.log(`Creating new Review with ID ${review.id}`);
+        await prisma.review.create({
+          data: review,
+        });
+      }
+    }
+
+    console.log("Database seeded successfully!");
+  } catch (error) {
+    console.error("Error seeding the database:", error);
+    process.exit(1);
+  } finally {
+    await prisma.$disconnect();
+  }
 }
 
-main()
-  .catch((e) => {
-    console.error(e);
-    process.exit(1);
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
+main();
