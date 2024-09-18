@@ -9,7 +9,7 @@ const token = jwt.sign(
   { expiresIn: "1h" } // Token expires in 1 hour
 );
 
-//console.log(token); // Output the token for use
+//console.log(token); uncomment this line to see the token for use
 
 export function authMiddleware(req, res, next) {
   const authHeader = req.headers["authorization"];

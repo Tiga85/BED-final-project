@@ -15,5 +15,5 @@ const options = { method: 'POST',
   request(options, function (error, response, body) {
     if (error) throw new Error(error);
   
-    console.log(body);
+   // console.log(body);  // uncomment this line to see the token for use
   });
