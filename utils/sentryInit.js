@@ -15,7 +15,7 @@ Sentry.init({
   dsn: process.env.SENTRY_DSN, // Access the DSN from the environment
   integrations: [new CustomIntegration()],
   // Tracing
-  tracesSampleRate: 10.0, //  Capture 100% of the transactions
+  tracesSampleRate: 1.0, //  Capture 100% of the transactions
   // Set sampling rate for profiling - this is relative to tracesSampleRate
-  profilesSampleRate: 10.0,
+  profilesSampleRate: 1.0,
 });
