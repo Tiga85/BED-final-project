@@ -6,7 +6,7 @@ import hostsData from "../data/hosts.json" assert { type: "json" };
 import bookingsData from "../data/bookings.json" assert { type: "json" };
 import amenitiesData from "../data/amenities.json" assert { type: "json" };
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient({ log: ['query', 'info', 'warn', 'error'] })
 
 async function main() {
   try {
@@ -96,4 +96,13 @@ async function main() {
   }
 }
 
-main();
+main()
+
+.then(async () => {
+  await prisma.$disconnect()
+})
+.catch(async (e) => {
+  console.error(e)
+  await prisma.$disconnect()
+  process.exit(1)
+})
