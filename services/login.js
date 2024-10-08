@@ -10,11 +10,17 @@ export async function login(username, password) {
 
   // Fetch user from the database using Prisma
   const user = await prisma.user.findUnique({
-    where: { username, password },
+    where: { username },
   });
 
-  if (!user || user.password !== password) {
-    throw new Error("Invalid credentials!");
+  if (!user) {
+    console.error("User not found"); // Log user not found
+    throw { status: 404, message: "User not found!" };
+  }
+
+  if (user.password !== password) {
+    console.error("Invalid credentials"); // Log invalid credentials
+    throw { status: 401, message: "Invalid credentials!" };
   }
 
   const token = jwt.sign({ userId: user.id }, secretKey);
