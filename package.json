@@ -9,9 +9,11 @@
   },
   "scripts": {
     "dev": "nodemon index.js",
+    "testV": "vitest",
     "seed": "node ./prisma/seed.js",
     "test-positive": "newman run \"./postman/collections/Bookings API.json\" -e \"./postman/environments/Local.postman_environment.json\"",
     "test-negative": "newman run \"./postman/collections/Bookings API Negative.json\" -e \"./postman/environments/Local.postman_environment.json\"",
+    "test:api": "newman run https://api.postman.com/collections/36541218-8a821be5-27b9-48b5-b46c-e51934095ae3?access_key=PMAT-01J9SJHH400JJEZD8AVQNA0MJK",
     "test": "npm run test-positive && npm run test-negative"
   },
   "author": "Tiga85",
@@ -31,7 +33,7 @@
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/uuid": "^10.0.0",
-    "newman": "^6.2.0",
+    "newman": "^6.2.1",
     "nodemon": "^3.0.1",
     "prisma": "^5.20.0"
   },
