@@ -5,16 +5,15 @@ import {
   getBookingById,
   updateBooking,
   deleteBooking,
-} from "../services/bookingService.js";
+} from "../services/bookingsService.js";
 
-import {authMiddleware} from '../middleware/advancedAuth.js';
-//import {authMiddleware} from '../middleware/authMiddleware.js';
-const router = express.Router();
+//import {authMiddleware} from '../middleware/advancedAuth.js';
+import { authMiddleware } from "../middleware/authMiddleware.js";
 
-router.get("/bookings", getAllBookings);
-router.post("/bookings", authMiddleware, createBooking);
-router.get("/bookings/:id", getBookingById);
-router.put("/bookings/:id", authMiddleware, updateBooking);
-router.delete("/bookings/:id", authMiddleware, deleteBooking);
+export const router = express.Router();
 
-export default router;
+router.get("/", getAllBookings);
+router.post("/", authMiddleware, createBooking);
+router.get("/:id", getBookingById);
+router.put("/:id", authMiddleware, updateBooking);
+router.delete("/:id", authMiddleware, deleteBooking);

@@ -5,15 +5,43 @@ const prisma = new PrismaClient();
 
 export async function getAllBookings(req, res, next) {
   try {
+    const { userId, propertyId } = req.query; // Extract query parameters
+
+    // Initialize the "where" clause object
+    const whereClause = {};
+
+    // If userId is provided, add it to the "where" clause
+    if (userId) {
+      whereClause.userId = userId;
+    }
+
+    // If propertyId is provided, add it to the "where" clause
+    if (propertyId) {
+      whereClause.propertyId = propertyId;
+    }
+
+    // Query the bookings based on the "where" clause
     const bookings = await prisma.booking.findMany({
+      where: whereClause,
       include: {
-        user: true, // Include user related to the booking
+        user: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            email: true,
+            phoneNumber: true,
+            profilePicture: true,
+            // Password is intentionally excluded
+          },
+        }, // Include user related to the booking
         property: true, // Include property related to the booking
       },
     });
+
     res.status(200).json(bookings);
   } catch (error) {
-    next(error);
+    next(error); // Pass the error to the error handler
   }
 }
 
@@ -33,7 +61,17 @@ export async function getBookingById(req, res, next) {
     const booking = await prisma.booking.findUnique({
       where: { id: req.params.id },
       include: {
-        user: true, // Include user related to the booking
+        user: {
+          select: {
+            id: true,
+            username: true,
+            name: true,
+            email: true,
+            phoneNumber: true,
+            profilePicture: true,
+            // Password is intentionally excluded
+          },
+        }, // Include user related to the booking
         property: true, // Include property related to the booking
       },
     });
