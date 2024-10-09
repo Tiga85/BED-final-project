@@ -3,9 +3,9 @@ import * as Sentry from "@sentry/node";
 import express from "express";
 import "dotenv/config";
 
-import logMiddleware from "./middleware/logMiddleware.js";
-import loginRouter from "./routes/loginRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
+import { logMiddleware } from "./middleware/logMiddleware.js";
+import { router as loginRouter } from "./routes/loginRoutes.js";
+import { router as usersRouter } from "./routes/userRoutes.js";
 import hostRoutes from "./routes/hostRoutes.js";
 import propertyRoutes from "./routes/propertyRoutes.js";
 import amenityRoutes from "./routes/amenityRoutes.js";
@@ -17,14 +17,18 @@ import errorHandler from "./middleware/errorHandler.js";
 
 const app = express();
 app.use(express.json());
+
+// Logging of the duration of all requests
 app.use(logMiddleware);
 
-app.use("/api", loginRouter);
-app.use("/api", userRoutes);
+// Login
+app.use("/login", loginRouter);
+
+app.use("/users", usersRouter);
 app.use("/api", hostRoutes);
 app.use("/api", propertyRoutes);
 app.use("/api", amenityRoutes);
-app.use("/api", bookingRoutes)
+app.use("/api", bookingRoutes);
 app.use("/api", reviewRoutes);
 app.use("/api", dataRoutes);
 
