@@ -1,5 +1,5 @@
 import express from "express";
-import { login } from "../services/login.js";
+import { login } from "../services/loginService.js";
 
 export const router = express.Router();
 router.post("/", async (req, res) => {

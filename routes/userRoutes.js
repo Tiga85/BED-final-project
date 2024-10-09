@@ -8,7 +8,7 @@ import {
 } from "../services/usersService.js";
 
 //import {authMiddleware} from '../middleware/advancedAuth.js';
-import {authMiddleware} from '../middleware/authMiddleware.js';
+import { authMiddleware } from "../middleware/authMiddleware.js";
 
 export const router = express.Router();
 
@@ -17,4 +17,3 @@ router.post("/", authMiddleware, createUser);
 router.get("/:id", getUserById);
 router.put("/:id", authMiddleware, updateUser);
 router.delete("/:id", authMiddleware, deleteUser);
-
