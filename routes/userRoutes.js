@@ -5,17 +5,16 @@ import {
   getUserById,
   updateUser,
   deleteUser,
-} from "../services/userService.js";
+} from "../services/usersService.js";
 
-import {authMiddleware} from '../middleware/advancedAuth.js';
-//import {authMiddleware} from '../middleware/authMiddleware.js';
+//import {authMiddleware} from '../middleware/advancedAuth.js';
+import {authMiddleware} from '../middleware/authMiddleware.js';
 
-const router = express.Router();
+export const router = express.Router();
 
-router.get("/users", getAllUsers);
-router.post("/users", authMiddleware, createUser);
-router.get("/users/:id", getUserById);
-router.put("/users/:id", authMiddleware, updateUser);
-router.delete("/users/:id", authMiddleware, deleteUser);
+router.get("/", getAllUsers);
+router.post("/", authMiddleware, createUser);
+router.get("/:id", getUserById);
+router.put("/:id", authMiddleware, updateUser);
+router.delete("/:id", authMiddleware, deleteUser);
 
-export default router;
