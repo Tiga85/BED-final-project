@@ -5,16 +5,15 @@ import {
   getHostById,
   updateHost,
   deleteHost,
-} from "../services/hostService.js";
+} from "../services/hostsService.js";
 
-import {authMiddleware} from '../middleware/advancedAuth.js';
-//import {authMiddleware} from '../middleware/authMiddleware.js';
-const router = express.Router();
+//import {authMiddleware} from '../middleware/advancedAuth.js';
+import { authMiddleware } from "../middleware/authMiddleware.js";
 
-router.get("/hosts", getAllHosts);
-router.post("/hosts", authMiddleware, createHost);
-router.get("/hosts/:id", getHostById);
-router.put("/hosts/:id", authMiddleware, updateHost);
-router.delete("/hosts/:id", authMiddleware, deleteHost);
+export const router = express.Router();
 
-export default router;
+router.get("/", getAllHosts);
+router.post("/", authMiddleware, createHost);
+router.get("/:id", getHostById);
+router.put("/:id", authMiddleware, updateHost);
+router.delete("/:id", authMiddleware, deleteHost);
