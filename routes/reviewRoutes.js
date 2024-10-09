@@ -5,17 +5,15 @@ import {
   getReviewById,
   updateReview,
   deleteReview,
-} from "../services/reviewService.js";
+} from "../services/reviewsService.js";
 
-import {authMiddleware} from '../middleware/advancedAuth.js';
-//import {authMiddleware} from '../middleware/authMiddleware.js';
+//import {authMiddleware} from '../middleware/advancedAuth.js';
+import { authMiddleware } from "../middleware/authMiddleware.js";
 
-const router = express.Router();
+export const router = express.Router();
 
-router.get("/reviews", getAllReviews);
-router.post("/reviews", authMiddleware, createReview);
-router.get("/reviews/:id", authMiddleware, getReviewById);
-router.put("/reviews/:id", updateReview);
-router.delete("/reviews/:id", authMiddleware, deleteReview);
-
-export default router;
+router.get("/", getAllReviews);
+router.post("/", authMiddleware, createReview);
+router.get("/:id", getReviewById);
+router.put("/:id", authMiddleware, updateReview);
+router.delete("/:id", authMiddleware, deleteReview);
