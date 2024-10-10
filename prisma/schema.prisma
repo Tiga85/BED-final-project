@@ -78,16 +78,16 @@ model Amenity {
 }
 
 model Booking {
-  id             String   @id @default(uuid())
-  userId         String?  @default(uuid())
-  propertyId     String   @default(uuid())
+  id             String    @id @default(uuid())
+  userId         String?   @default(uuid())
+  propertyId     String?   @default(uuid())
   checkinDate    DateTime
   checkoutDate   DateTime
   numberOfGuests Int
   totalPrice     Int
   bookingStatus  String
-  user           User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  property       Property @relation(fields: [propertyId], references: [id])
+  user           User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  property       Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([propertyId])
