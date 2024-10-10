@@ -90,6 +90,21 @@ async function main() {
 
     console.log("Seeding PropertyAmenities...");
     for (const propertyAmenity of propertyAmenitiesData.propertyAmenities) {
+      const existingProperty = await prisma.property.findUnique({
+        where: { id: propertyAmenity.propertyId },
+      });
+    
+      const existingAmenity = await prisma.amenity.findUnique({
+        where: { id: propertyAmenity.amenityId },
+      });
+    
+      if (!existingProperty || !existingAmenity) {
+        console.error(
+          `Property or Amenity does not exist. Skipping connection for Property ID: ${propertyAmenity.propertyId} and Amenity ID: ${propertyAmenity.amenityId}`
+        );
+        continue; // Skip this connection if either property or amenity does not exist
+      }
+    
       await prisma.property.update({
         where: { id: propertyAmenity.propertyId },
         data: {
@@ -99,7 +114,7 @@ async function main() {
         },
       });
     }
-
+    
     console.log("Database seeded successfully!");
   } catch (error) {
     console.error("Error seeding the database:", error);
