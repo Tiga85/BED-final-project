@@ -28,13 +28,13 @@ model User {
 }
 
 model Review {
-  id         String   @id @default(uuid())
-  userId     String?  @default(uuid())
-  propertyId String   @default(uuid())
+  id         String    @id @default(uuid())
+  userId     String?   @default(uuid())
+  propertyId String?   @default(uuid())
   rating     Int
   comment    String
-  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
-  property   Property @relation(fields: [propertyId], references: [id])
+  user       User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  property   Property? @relation(fields: [propertyId], references: [id], onDelete: SetNull)
 
   @@index([userId])
   @@index([propertyId])
