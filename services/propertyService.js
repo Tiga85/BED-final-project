@@ -15,9 +15,6 @@ export async function getAllProperties(req, res, next) {
       bedroomCount,
       bathRoomCount,
       maxGuestCount,
-      bookings,
-      reviews,
-      host,
     } = req.query;
 
     // Build filter object based on query parameters
@@ -33,30 +30,23 @@ export async function getAllProperties(req, res, next) {
 
     if (amenities) {
       filter.amenities = {
-        some: { name: amenities },
+        some: { name: amenities }, // Filter properties that have the specified amenity
       };
     }
 
-    if (bookings) {
-      filter.bookings = { some: {} };
-    }
-
-    if (reviews) {
-      filter.reviews = { some: {} };
-    }
-
-    if (host) {
-      filter.host = { name: { contains: host, mode: "insensitive" } };
-    }
+    // Determine if query parameters are provided
+    const includeRelatedData = hostId || title || location || pricePerNight || amenities || bedroomCount || bathRoomCount || maxGuestCount;
 
     const properties = await prisma.property.findMany({
       where: filter,
-      include: {
-        amenities: true, // Include amenities related to the property
-        bookings: true, // Include bookings related to the property
-        reviews: true, // Include reviews related to the property
-        host: true, // Include host related to the property
-      },
+      include: includeRelatedData
+        ? { // Include related data only if filters are applied
+            amenities: true,
+            bookings: true,
+            reviews: true,
+            host: true,
+          }
+        : {}, // Exclude related data when no filters are applied
     });
 
     res.status(200).json(properties);
@@ -80,6 +70,12 @@ export async function getPropertyById(req, res, next) {
   try {
     const property = await prisma.property.findUnique({
       where: { id: req.params.id },
+      include: {
+        amenities: true, // Include amenities related to the property
+        bookings: true,  // Include bookings related to the property
+        reviews: true,   // Include reviews related to the property
+        host: true,      // Include host related to the property
+      },
     });
     if (!property) {
       throw new NotFoundError("property", req.params.id);
@@ -94,6 +90,12 @@ export async function updateProperty(req, res, next) {
   try {
     const property = await prisma.property.update({
       where: { id: req.params.id },
+      include: {
+        amenities: true, // Include amenities related to the property
+        bookings: true,  // Include bookings related to the property
+        reviews: true,   // Include reviews related to the property
+        host: true,      // Include host related to the property
+      },
       data: req.body,
     });
     res.status(200).json(property);
@@ -104,16 +106,21 @@ export async function updateProperty(req, res, next) {
 
 export async function deleteProperty(req, res, next) {
   try {
+    // Set propertyId to null in related bookings
     await prisma.booking.updateMany({
       where: { propertyId: req.params.id },
-      data: { propertyId: null }, // Set propertyId to null in related bookings
+      data: { propertyId: null },
     });
+
+    // Delete the property
     const deletedProperty = await prisma.property.delete({
       where: { id: req.params.id },
     });
+
     if (!deletedProperty) {
       throw new NotFoundError("property", req.params.id);
     }
+
     res.status(200).json({ message: "Property deleted" });
   } catch (error) {
     next(error);

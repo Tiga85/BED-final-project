@@ -7,15 +7,15 @@ import {
   deleteProperty,
 } from "../services/propertyService.js";
 
-import {authMiddleware} from '../middleware/advancedAuth.js';
-//import {authMiddleware} from '../middleware/authMiddleware.js';
+//import {authMiddleware} from '../middleware/advancedAuth.js';
+import {authMiddleware} from '../middleware/authMiddleware.js';
 
-const router = express.Router();
+export const router = express.Router();
 
-router.get("/properties", getAllProperties);
-router.post("/properties", authMiddleware, createProperty);
-router.get("/properties/:id", getPropertyById);
-router.put("/properties/:id", authMiddleware, updateProperty);
-router.delete("/properties/:id", authMiddleware, deleteProperty);
+router.get("/", getAllProperties);
+router.post("/", authMiddleware, createProperty);
+router.get("/:id", getPropertyById);
+router.put("/:id", authMiddleware, updateProperty);
+router.delete("/:id", authMiddleware, deleteProperty);
 
-export default router;
+
