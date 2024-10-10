@@ -15,6 +15,10 @@
     {
       "propertyId": "h0123456-78f0-1234-5678-9abcdef01234",
       "amenityId": "q9012345-67no-pqrs-6789-abcdef012345"
+    },
+    {
+      "propertyId": "j2345678-90f1-2345-6789-abcdef012345",
+      "amenityId": "d06685fc-e3ef-4904-8d05-a2888510d8a5"
     }
   ]
 }
