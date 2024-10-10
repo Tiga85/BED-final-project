@@ -6,28 +6,32 @@ const prisma = new PrismaClient();
 export async function getAllAmenities(req, res, next) {
   try {
     const { name } = req.query;
+    console.log("Query name parameter:", name); // Add logging to debug
 
-    const filter = {};
+    let amenities;
     if (name) {
-      filter.name = { contains: name, mode: "insensitive" };
-    }
-
-    const amenities = await prisma.amenity.findMany({
-      where: filter,
-      include: {
-        properties: {
-          include: {
-            amenities: true, // Include the amenities within the properties
+      amenities = await prisma.amenity.findFirst({
+        where: {
+          name: {
+            equals: name,
+            mode: "insensitive", // Case-insensitive search
           },
         },
-      },
-    });
-
-    res.status(200).json(amenities);
+        include: { properties: true },
+      });
+      if (!amenities) {
+        throw new NotFoundError("Amenity not found", name);
+      }
+      res.status(200).json(amenities);
+    } else {
+      amenities = await prisma.amenity.findMany();
+      res.status(200).json(amenities);
+    }
   } catch (error) {
     next(error);
   }
 }
+
 
 export async function createAmenity(req, res, next) {
   try {
@@ -49,13 +53,16 @@ export async function getAmenityById(req, res, next) {
       },
     });
     if (!amenity) {
-      throw new NotFoundError("amenity", req.params.id);
+      throw new NotFoundError("Amenity not found", req.params.id);
     }
     res.status(200).json(amenity);
   } catch (error) {
     next(error);
   }
 }
+
+
+
 
 export async function updateAmenity(req, res, next) {
   try {
