@@ -5,13 +5,15 @@ import "dotenv/config";
 
 import { logMiddleware } from "./middleware/logMiddleware.js";
 import { router as loginRouter } from "./routes/loginRoutes.js";
-import { router as usersRouter } from "./routes/userRoutes.js";
-import { router as hostRouter } from "./routes/hostRoutes.js"; // Import hostRoutes from "./routes/hostRoutes.js";
-import propertyRoutes from "./routes/propertyRoutes.js";
-import amenityRoutes from "./routes/amenityRoutes.js";
-import { router as bookingRouter } from "./routes/bookingRoutes.js"; // Import bookingRoutes from "./routes/bookingRoutes.js";
-import { router as reviewRouter } from "./routes/reviewRoutes.js"; // Import reviewRoute from "./routes/reviewRoutes.js";
+import { router as userRouter } from "./routes/userRoutes.js";
+import { router as hostRouter } from "./routes/hostRoutes.js";
+import { router as propertyRouter } from "./routes/propertyRoutes.js";
+import { router as amenityRouter } from "./routes/amenityRoutes.js";
+import { router as bookingRouter } from "./routes/bookingRoutes.js";
+import { router as reviewRouter } from "./routes/reviewRoutes.js";
 import dataRoutes from "./routes/dataRoutes.js";
+
+// Error handling middleware
 import notFoundErrorHandler from "./middleware/notFoundErrorHandler.js";
 import errorHandler from "./middleware/errorHandler.js";
 
@@ -24,12 +26,15 @@ app.use(logMiddleware);
 // Login
 app.use("/login", loginRouter);
 
-app.use("/users", usersRouter);
+// Bookings
+app.use("/users", userRouter);
 app.use("/hosts", hostRouter);
-app.use("/api", propertyRoutes);
-app.use("/api", amenityRoutes);
+app.use("/properties", propertyRouter);
+app.use("/amenities", amenityRouter);
 app.use("/bookings", bookingRouter);
 app.use("/reviews", reviewRouter);
+
+// Use to see all the json data
 app.use("/api", dataRoutes);
 
 app.get("/", (req, res) => {

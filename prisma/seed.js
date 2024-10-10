@@ -5,8 +5,9 @@ import propertiesData from "../data/properties.json" assert { type: "json" };
 import hostsData from "../data/hosts.json" assert { type: "json" };
 import bookingsData from "../data/bookings.json" assert { type: "json" };
 import amenitiesData from "../data/amenities.json" assert { type: "json" };
+import propertyAmenitiesData from "../data/propertyAmenities.json" assert { type: "json" };
 
-const prisma = new PrismaClient({ log: ['query', 'info', 'warn', 'error'] })
+const prisma = new PrismaClient({ log: ["query", "info", "warn", "error"] });
 
 async function main() {
   try {
@@ -87,6 +88,18 @@ async function main() {
       }
     }
 
+    console.log("Seeding PropertyAmenities...");
+    for (const propertyAmenity of propertyAmenitiesData.propertyAmenities) {
+      await prisma.property.update({
+        where: { id: propertyAmenity.propertyId },
+        data: {
+          amenities: {
+            connect: { id: propertyAmenity.amenityId },
+          },
+        },
+      });
+    }
+
     console.log("Database seeded successfully!");
   } catch (error) {
     console.error("Error seeding the database:", error);
@@ -97,12 +110,11 @@ async function main() {
 }
 
 main()
-
-.then(async () => {
-  await prisma.$disconnect()
-})
-.catch(async (e) => {
-  console.error(e)
-  await prisma.$disconnect()
-  process.exit(1)
-})
+  .then(async () => {
+    await prisma.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prisma.$disconnect();
+    process.exit(1);
+  });

@@ -9,10 +9,10 @@ generator client {
 }
 
 datasource db {
-  provider     = "postgresql"
-  url          = env("DATABASE_URL")
-  //  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
-  relationMode = "prisma"
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+  relationMode      = "prisma"
 }
 
 model User {
@@ -29,8 +29,8 @@ model User {
 
 model Review {
   id         String   @id @default(uuid())
-  userId     String?
-  propertyId String
+  userId     String?  @default(uuid())
+  propertyId String   @default(uuid())
   rating     Int
   comment    String
   user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
@@ -54,7 +54,7 @@ model Host {
 
 model Property {
   id            String    @id @default(uuid())
-  hostId        String?
+  hostId        String?   @default(uuid())
   title         String
   description   String
   location      String
@@ -63,7 +63,7 @@ model Property {
   bathRoomCount Int
   maxGuestCount Int
   rating        Int
-  amenities     Amenity[] @relation("PropertyAmenities")
+  amenities     Amenity[] @relation("PropertyAmenities") // Many-to-many relation
   bookings      Booking[]
   reviews       Review[]
   host          Host?     @relation(fields: [hostId], references: [id], onDelete: SetNull)
@@ -74,13 +74,13 @@ model Property {
 model Amenity {
   id         String     @id @default(uuid())
   name       String
-  properties Property[] @relation("PropertyAmenities")
+  properties Property[] @relation("PropertyAmenities") // Many-to-many relation
 }
 
 model Booking {
   id             String   @id @default(uuid())
-  userId         String?
-  propertyId     String
+  userId         String?  @default(uuid())
+  propertyId     String   @default(uuid())
   checkinDate    DateTime
   checkoutDate   DateTime
   numberOfGuests Int
