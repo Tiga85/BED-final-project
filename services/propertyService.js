@@ -35,12 +35,21 @@ export async function getAllProperties(req, res, next) {
     }
 
     // Determine if query parameters are provided
-    const includeRelatedData = hostId || title || location || pricePerNight || amenities || bedroomCount || bathRoomCount || maxGuestCount;
+    const includeRelatedData =
+      hostId ||
+      title ||
+      location ||
+      pricePerNight ||
+      amenities ||
+      bedroomCount ||
+      bathRoomCount ||
+      maxGuestCount;
 
     const properties = await prisma.property.findMany({
       where: filter,
       include: includeRelatedData
-        ? { // Include related data only if filters are applied
+        ? {
+            // Include related data only if filters are applied
             amenities: true,
             bookings: true,
             reviews: true,
@@ -61,7 +70,11 @@ export async function createProperty(req, res, next) {
 
     // Check if required fields are provided
     if (!title || !description || !location || !pricePerNight) {
-      return res.status(400).json({ error: 'Title, description, location, and pricePerNight are required' });
+      return res
+        .status(400)
+        .json({
+          error: "Title, description, location, and pricePerNight are required",
+        });
     }
 
     const property = await prisma.property.create({
@@ -75,8 +88,18 @@ export async function createProperty(req, res, next) {
 
 export async function getPropertyById(req, res, next) {
   try {
-    // Attempt to find the property by its ID and include related data
-    const property = await prisma.property.findUnique({
+    // Step 1: Check if the property exists by its id
+    const propertyExists = await prisma.property.findUnique({
+      where: { id: req.params.id },
+    });
+
+    // Return 404 if the property is not found
+    if (!propertyExists) {
+      return res.status(404).json({ error: "Property not found" });
+    }
+
+    // Step 2: Fetch the full property data with related information (amenities, bookings, etc.)
+    const property = await prisma.property.findFirst({
       where: { id: req.params.id },
       include: {
         amenities: true,
@@ -86,22 +109,12 @@ export async function getPropertyById(req, res, next) {
       },
     });
 
-    // Return 404 if the property is not found
-    if (!property) {
-      return res.status(404).json({ error: 'Property not found' });
-    }
-
-    // If found, return the property with related data
     res.status(200).json(property);
   } catch (error) {
     console.error("Error retrieving property:", error);
     next(error); // Pass the error to the error handling middleware
   }
 }
-
-
-
-
 
 export async function updateProperty(req, res, next) {
   try {
@@ -133,11 +146,6 @@ export async function updateProperty(req, res, next) {
     next(error);
   }
 }
-
-
-
-
-
 
 export async function deleteProperty(req, res, next) {
   try {

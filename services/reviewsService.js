@@ -109,11 +109,20 @@ export async function getReviewById(req, res, next) {
 
 export async function updateReview(req, res, next) {
   try {
-    const review = await prisma.review.update({
+    const review = await prisma.review.findUnique({
+      where: { id: req.params.id },
+    });
+
+    if (!review) {
+      return res.status(404).json({ error: "Review not found" });
+    }
+
+    const updatedReview = await prisma.review.update({
       where: { id: req.params.id },
       data: req.body,
     });
-    res.status(200).json(review);
+
+    res.status(200).json(updatedReview);
   } catch (error) {
     next(error);
   }
@@ -121,12 +130,18 @@ export async function updateReview(req, res, next) {
 
 export async function deleteReview(req, res, next) {
   try {
-    const deletedReview = await prisma.review.delete({
+    const review = await prisma.review.findUnique({
       where: { id: req.params.id },
     });
-    if (!deletedReview) {
-      throw new NotFoundError("review", req.params.id);
+
+    if (!review) {
+      return res.status(404).json({ error: "Review not found" });
     }
+
+    await prisma.review.delete({
+      where: { id: req.params.id },
+    });
+
     res.status(200).json({ message: "Review deleted" });
   } catch (error) {
     next(error);
