@@ -47,9 +47,24 @@ export async function getAllBookings(req, res, next) {
 
 export async function createBooking(req, res, next) {
   try {
+    const { userId, propertyId, checkinDate, checkoutDate, numberOfGuests } =
+      req.body;
+
+    // Check if required fields are provided
+    if (
+      !userId ||
+      !propertyId ||
+      !checkinDate ||
+      !checkoutDate ||
+      !numberOfGuests
+    ) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
     const booking = await prisma.booking.create({
       data: req.body,
     });
+
     res.status(201).json(booking);
   } catch (error) {
     next(error);
@@ -69,15 +84,16 @@ export async function getBookingById(req, res, next) {
             email: true,
             phoneNumber: true,
             profilePicture: true,
-            // Password is intentionally excluded
           },
-        }, // Include user related to the booking
-        property: true, // Include property related to the booking
+        },
+        property: true,
       },
     });
+
     if (!booking) {
-      throw new NotFoundError("booking", req.params.id);
+      return res.status(404).json({ error: "Booking not found" });
     }
+
     res.status(200).json(booking);
   } catch (error) {
     next(error);
@@ -86,11 +102,22 @@ export async function getBookingById(req, res, next) {
 
 export async function updateBooking(req, res, next) {
   try {
-    const booking = await prisma.booking.update({
+    // Check if the booking exists
+    const booking = await prisma.booking.findUnique({
+      where: { id: req.params.id },
+    });
+
+    if (!booking) {
+      return res.status(404).json({ error: "Booking not found" });
+    }
+
+    // Update the booking
+    const updatedBooking = await prisma.booking.update({
       where: { id: req.params.id },
       data: req.body,
     });
-    res.status(200).json(booking);
+
+    res.status(200).json(updatedBooking);
   } catch (error) {
     next(error);
   }
@@ -98,12 +125,18 @@ export async function updateBooking(req, res, next) {
 
 export async function deleteBooking(req, res, next) {
   try {
-    const deletedBooking = await prisma.booking.delete({
+    const booking = await prisma.booking.findUnique({
       where: { id: req.params.id },
     });
-    if (!deletedBooking) {
-      throw new NotFoundError("booking", req.params.id);
+
+    if (!booking) {
+      return res.status(404).json({ error: "Booking not found" });
     }
+
+    await prisma.booking.delete({
+      where: { id: req.params.id },
+    });
+
     res.status(200).json({ message: "Booking deleted" });
   } catch (error) {
     next(error);

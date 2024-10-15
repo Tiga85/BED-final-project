@@ -46,8 +46,18 @@ export async function getAllUsers(req, res, next) {
 
 export async function createUser(req, res, next) {
   try {
+    const { username, email, password } = req.body;
+
+    // Check if required fields are provided
+    if (!username || !email || !password) {
+      return res
+        .status(400)
+        .json({ error: "Username, email, and password are required" });
+    }
+
+    // Create the user
     const user = await prisma.user.create({
-      data: { ...req.body, password: req.body.password }, // Create a new user with hashed password
+      data: { ...req.body, password: req.body.password },
     });
     res.status(201).json(user);
   } catch (error) {
@@ -69,33 +79,53 @@ export async function getUserById(req, res, next) {
 
 export async function updateUser(req, res, next) {
   try {
-    const user = await prisma.user.update({
+    // Check if the user exists first
+    const existingUser = await prisma.user.findUnique({
+      where: { id: req.params.id },
+    });
+
+    // If the user doesn't exist, return a 404 error
+    if (!existingUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // If user exists, proceed with the update
+    const updatedUser = await prisma.user.update({
       where: { id: req.params.id },
       data: req.body,
     });
-    res.status(200).json(user);
+
+    res.status(200).json(updatedUser);
   } catch (error) {
-    next(error);
+    next(error); // Handle any other errors
   }
 }
 
 export async function deleteUser(req, res, next) {
   try {
+    // Check if the user exists first
+    const existingUser = await prisma.user.findUnique({
+      where: { id: req.params.id },
+    });
+
+    if (!existingUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Set userId to null in related bookings and reviews
     await prisma.booking.updateMany({
       where: { userId: req.params.id },
-      data: { userId: null }, // Set userId to null in related bookings
+      data: { userId: null },
     });
     await prisma.review.updateMany({
       where: { userId: req.params.id },
-      data: { userId: null }, // Set userId to null in related reviews
+      data: { userId: null },
     });
 
-    const deletedUser = await prisma.user.delete({
+    // Delete the user
+    await prisma.user.delete({
       where: { id: req.params.id },
     });
-    if (!deletedUser) {
-      throw new NotFoundError("user", req.params.id);
-    }
 
     res.status(200).json({ message: "User deleted" });
   } catch (error) {

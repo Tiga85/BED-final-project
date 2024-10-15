@@ -32,12 +32,18 @@ export async function getAllAmenities(req, res, next) {
   }
 }
 
-
 export async function createAmenity(req, res, next) {
   try {
+    const { name } = req.body;
+
+    if (!name) {
+      return res.status(400).json({ error: "Name is required" });
+    }
+
     const amenity = await prisma.amenity.create({
       data: req.body,
     });
+
     res.status(201).json(amenity);
   } catch (error) {
     next(error);
@@ -49,28 +55,38 @@ export async function getAmenityById(req, res, next) {
     const amenity = await prisma.amenity.findUnique({
       where: { id: req.params.id },
       include: {
-        properties: true, // Include the properties associated with the amenity
+        properties: true,
       },
     });
+
     if (!amenity) {
-      throw new NotFoundError("Amenity not found", req.params.id);
+      return res.status(404).json({ error: "Amenity not found" });
     }
+
     res.status(200).json(amenity);
   } catch (error) {
     next(error);
   }
 }
 
-
-
-
 export async function updateAmenity(req, res, next) {
   try {
-    const amenity = await prisma.amenity.update({
+    // Check if the amenity exists
+    const amenity = await prisma.amenity.findUnique({
+      where: { id: req.params.id },
+    });
+
+    if (!amenity) {
+      return res.status(404).json({ error: "Amenity not found" });
+    }
+
+    // Update the amenity
+    const updatedAmenity = await prisma.amenity.update({
       where: { id: req.params.id },
       data: req.body,
     });
-    res.status(200).json(amenity);
+
+    res.status(200).json(updatedAmenity);
   } catch (error) {
     next(error);
   }
@@ -78,12 +94,18 @@ export async function updateAmenity(req, res, next) {
 
 export async function deleteAmenity(req, res, next) {
   try {
-    const deletedAmenity = await prisma.amenity.delete({
+    const amenity = await prisma.amenity.findUnique({
       where: { id: req.params.id },
     });
-    if (!deletedAmenity) {
-      throw new NotFoundError("amenity", req.params.id);
+
+    if (!amenity) {
+      return res.status(404).json({ error: "Amenity not found" });
     }
+
+    await prisma.amenity.delete({
+      where: { id: req.params.id },
+    });
+
     res.status(200).json({ message: "Amenity deleted" });
   } catch (error) {
     next(error);
