@@ -14,13 +14,8 @@ export async function login(username, password) {
   });
 
   if (!user) {
-    console.error("User not found"); // Log user not found
-    throw { status: 404, message: "User not found!" };
-  }
-
-  if (user.password !== password) {
-    console.error("Invalid credentials"); // Log invalid credentials
-    throw { status: 401, message: "Invalid credentials!" };
+    console.error("Unauthorized user");
+    throw { status: 401, message: "User is not authorized!" };
   }
 
   const token = jwt.sign({ userId: user.id }, secretKey);
